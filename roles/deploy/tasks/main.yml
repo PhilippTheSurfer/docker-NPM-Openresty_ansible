@@ -63,6 +63,14 @@
     group: docker
     mode: '0755'
 
+- name: create nginx-conf-files directory
+  file:
+    path: /opt/frontproxy/nginx/nginx-conf-files
+    state: directory
+    owner: root
+    group: docker
+    mode: '0755'
+
 - name: Deploy Dockerfile
   template:
     src: Dockerfile.j2
@@ -71,9 +79,9 @@
     group: 'docker'
 
 - name: create nginx/nginx.conf
-  copy:
-    src: "nginx.conf"
-    dest: /opt/frontproxy/nginx/nginx.conf
+  template:
+    src: nginx.conf.j2
+    dest: "/opt/frontproxy/nginx/nginx.conf"
     owner: root
     group: docker
     mode: '0644'
