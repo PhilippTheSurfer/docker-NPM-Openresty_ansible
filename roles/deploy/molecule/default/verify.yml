@@ -2,19 +2,19 @@
 - name: Verify
   hosts: all
   tasks:
-    - name: Check if Nextcloud directory exists
+    - name: Check if frontproxy directory exists
       stat:
-        path: /opt/nextcloud
-      register: nextcloud_dir
+        path: /opt/frontproxy
+      register: frontproxy_dir
 
-    - name: Ensure Nextcloud directory exists
+    - name: Ensure frontproxy directory exists
       assert:
         that:
-          - nextcloud_dir.stat.exists
+          - frontproxy_dir.stat.exists
     
     - name: Check if docker-compose file is deployed
       stat:
-        path: /opt/nextcloud/docker-compose.yml
+        path: /opt/frontproxy/docker-compose.yml
       register: compose_file
 
     - name: Ensure docker-compose file is deployed
@@ -24,7 +24,7 @@
 
     - name: Check if Dockerfile is deployed
       stat:
-        path: /opt/nextcloud/Dockerfile
+        path: /opt/frontproxy/nginx/Dockerfile
       register: dockerfile
       
     - name: Ensure Dockerfile is deployed
