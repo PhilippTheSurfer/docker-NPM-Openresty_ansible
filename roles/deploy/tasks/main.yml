@@ -3,52 +3,94 @@
   include_vars:
     file: "../../group_vars/all.yml"
 
-
-- name: Ensure directories for Nextcloud is present
+- name: change directory owner in "/opt"
   file:
-    path: "/opt/nextcloud"
+    path: /opt
     state: directory
+    owner: root
+    group: docker
+    recurse: yes
 
-- name: Ensure directory for Nextcloud Data is present
+- name: Setze Berechtigungen für /opt
   file:
-    path: "/opt/nextcloud/data"
+    path: /opt
     state: directory
-    owner: 'root'
-    group: 'docker'
+    mode: '0775'
 
-- name: Create Database directory for MySQL
-  file: 
-    path: "/opt/nextcloud/data/nextcloud-db"
+- name: Erstelle Verzeichnis /opt/frontproxy
+  file:
+    path: /opt/frontproxy
+    state: directory
+    mode: '0755'
+
+- name: Lege docker-compose.yml in /opt/frontproxy an
+  template:
+    src: docker-compose.yml.j2
+    dest: "/opt/frontproxy/docker-compose.yml"
+    owner: root
+    group: docker
+    mode: '0644'
+
+- name: create npm-data directory
+  file:
+    path: /opt/frontproxy/npm-data
+    state: directory
+    owner: root
+    group: docker
+    mode: '0755'
+
+- name: create npm-ssl directory
+  file:
+    path: /opt/frontproxy/npm-ssl
+    state: directory
+    owner: root
+    group: docker
+    mode: '0755'
+
+- name: create npm-database directory
+  file:
+    path: /opt/frontproxy/npm-database
     state: directory
     owner: '999'
     group: '999'
     mode: '0755'
 
-- name: Create HTML Data directory for Nextcloud
-  file: 
-    path: "/opt/nextcloud/data/nextcloud-data"
+- name: create nginx directory
+  file:
+    path: /opt/frontproxy/nginx
     state: directory
-    owner: 'root'
-    group: 'docker'
-
-- name: Deploy Docker Compose file 
-  template:
-    src: docker-compose.yml.j2
-    dest: "/opt/nextcloud/docker-compose.yml"
-    owner: 'root'
-    group: 'docker'
-
-- name: Deploy .env file
-  template:
-    src: .env.j2
-    dest: "/opt/nextcloud/.env"
-    owner: 'root'
-    group: 'docker'
+    owner: root
+    group: docker
+    mode: '0755'
 
 - name: Deploy Dockerfile
   template:
     src: Dockerfile.j2
-    dest: "/opt/nextcloud/Dockerfile"
+    dest: "/opt/frontproxy/nginx/Dockerfile"
     owner: 'root'
     group: 'docker'
+
+- name: create nginx/nginx.conf
+  copy:
+    src: "nginx.conf"
+    dest: /opt/frontproxy/nginx/nginx.conf
+    owner: root
+    group: docker
+    mode: '0644'
+
+- name: change directory owner in "/opt/frontproxy/nginx"
+  file:
+    path: /opt/frontproxy/nginx
+    state: directory
+    owner: root
+    group: docker
+    recurse: yes
+
+- name: Deploy .env file
+  template:
+    src: .env.j2
+    dest: "/opt/frontproxy/.env"
+    owner: 'root'
+    group: 'docker'
+    mode: '0640'
   notify: docker run
