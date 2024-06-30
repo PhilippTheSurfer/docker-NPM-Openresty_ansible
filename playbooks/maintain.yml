@@ -1,8 +1,0 @@
----
-- name: maintain Nextcloud
-  hosts: server
-  become: true
-  vars_files:
-    - ../vault.yml
-  roles:
-    - maintain
