@@ -1,8 +1,7 @@
-FROM nextcloud:{{ version }}-apache
-
-RUN apt-get update && \
-    apt-get install -y libbz2-dev && \
-    docker-php-ext-install bz2
-
-RUN a2enmod rewrite && \
-    a2enmod env
+      FROM openresty/openresty:focal
+      RUN mkdir /var/log/nginx
+      RUN ["luarocks", "install", "lua-resty-session"]
+      RUN ["luarocks", "install", "lua-resty-http"]
+      RUN ["luarocks", "install", "lua-resty-jwt"]
+      RUN ["luarocks", "install", "lua-resty-openidc"]
+      EXPOSE 80
